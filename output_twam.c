@@ -61,7 +61,10 @@ static int output_twam_write_data(const char* output_directory, const font_t *fo
 	int ret = 0;
 
 	char* fontname;
-	asprintf(&fontname, "%s_%s_%i", font->family_name, font->style_name, font->height);
+	if (asprintf(&fontname, "%s_%s_%i", font->family_name, font->style_name, font->height) == -1) {
+		fprintf(stderr, "Not enough memory for asprintf!\n");
+		return -1;
+	};
 
 	char* fontname_lower = strdup(fontname);
 	char* fontname_upper = strdup(fontname);
@@ -74,7 +77,10 @@ static int output_twam_write_data(const char* output_directory, const font_t *fo
 	char* filename;
 
 	// header file
-	asprintf(&filename, "%s/%s.h", output_directory, fontname_lower);
+	if (asprintf(&filename, "%s/%s.h", output_directory, fontname_lower) == -1) {
+		fprintf(stderr, "Not enough memory for asprintf!\n");
+		return -1;
+	}
 	fd = fopen(filename, "w");
 	if (fd == NULL) {
 		fprintf(stderr, "Could not open file '%s'!\n", filename);
@@ -95,7 +101,10 @@ static int output_twam_write_data(const char* output_directory, const font_t *fo
 	fclose(fd);
 
 	// c file
-	asprintf(&filename, "%s/%s.c", output_directory, fontname_lower);
+	if (asprintf(&filename, "%s/%s.c", output_directory, fontname_lower) == -1) {
+		fprintf(stderr, "Not enough memory for asprintf!\n");
+		return -1;
+	}
 	fd = fopen(filename, "w");
 	if (fd == NULL) {
 		fprintf(stderr, "Could not open file '%s'!\n", filename);
@@ -192,7 +201,10 @@ static int output_twam_write_headers(const char* output_directory) {
 	char* filename;
 
 	// font.h
-	asprintf(&filename, "%s/font.h", output_directory);
+	if (asprintf(&filename, "%s/font.h", output_directory) == -1) {
+		fprintf(stderr, "Not enough memory for asprintf!\n");
+		return -1;
+	}
 	fd = fopen(filename, "w");
 	if (fd == NULL) {
 		fprintf(stderr, "Could not open file '%s'!\n", filename);
@@ -222,7 +234,10 @@ static int output_twam_write_headers(const char* output_directory) {
 	fclose(fd);
 
 	// character.h
-	asprintf(&filename, "%s/character.h", output_directory);
+	if (asprintf(&filename, "%s/character.h", output_directory) == -1) {
+		fprintf(stderr, "Not enough memory for asprintf!\n");
+		return -1;
+	}
 	fd = fopen(filename, "w");
 	if (fd == NULL) {
 		fprintf(stderr, "Could not open file '%s'!\n", filename);
@@ -246,7 +261,10 @@ static int output_twam_write_headers(const char* output_directory) {
 
 
 	// glyph.h
-	asprintf(&filename, "%s/glyph.h", output_directory);
+	if (asprintf(&filename, "%s/glyph.h", output_directory) == -1) {
+		fprintf(stderr, "Not enough memory for asprintf!\n");
+		return -1;
+	}
 	fd = fopen(filename, "w");
 	if (fd == NULL) {
 		fprintf(stderr, "Could not open file '%s'!\n", filename);

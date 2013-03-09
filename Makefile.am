@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = dist-bzip2 no-dist-gzip foreign
 
-CFLAGS = -Wall -std=c99 -O2 `freetype-config --cflags` -g
+CFLAGS = -Wall -std=c99 -O2 `freetype-config --cflags` -g -D_GNU_SOURCE
 LDFLAGS = `freetype-config --libs`
 
 bin_PROGRAMS = fontgen

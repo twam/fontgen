@@ -34,7 +34,10 @@ size_t glyph_add(glyph_t** glyphs, size_t* glyphs_size, FT_Face face, FT_UInt gl
 
 		glyph->name = strdup(buffer);
 	} else {
-		asprintf(&(glyph->name), "glyph_%u", glyph_index);
+		if (asprintf(&(glyph->name), "glyph_%u", glyph_index) == -1) {
+			fprintf(stderr, "Not enough memory for asprintf!\n");
+			glyph->name = NULL;
+		}
 	}
 
 	// load glyph
