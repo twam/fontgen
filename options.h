@@ -6,7 +6,9 @@
 typedef enum {
 	ASCII,
 	ISO_8859_1,
-	ISO_8859_7
+	ISO_8859_7,
+	CP850,
+	CP437
 } charset_t;
 
 typedef enum {

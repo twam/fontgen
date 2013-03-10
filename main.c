@@ -48,6 +48,12 @@ int main(int argc, char** argv) {
 			case ISO_8859_7:
 				charset_load_iso8859_7(&characters, &characters_size);
 				break;
+			case CP850:
+				charset_load_cp850(&characters, &characters_size);
+				break;
+			case CP437:
+				charset_load_cp437(&characters, &characters_size);
+				break;
 		}
 	}
 

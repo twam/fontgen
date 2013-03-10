@@ -48,6 +48,8 @@ void parse(int argc, char** argv, arguments_t *arguments) {
 		[ASCII] = "ascii",
 		[ISO_8859_1] = "iso-8859-1",
 		[ISO_8859_7] = "iso-8859-7",
+		[CP850] = "cp850",
+		[CP437] = "cp437",
 		NULL
 	};
 

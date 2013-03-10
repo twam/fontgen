@@ -7,5 +7,7 @@
 void charset_load_ascii(character_t** characters, size_t* characters_size);
 void charset_load_iso8859_1(character_t** characters, size_t* characters_size);
 void charset_load_iso8859_7(character_t** characters, size_t* characters_size);
+void charset_load_cp850(character_t** characters, size_t* characters_size);
+void charset_load_cp437(character_t** characters, size_t* characters_size);
 
 #endif
