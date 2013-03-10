@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([fontgen], [m4_esyscmd_s([git describe --always --tag --dirty])], [Tobias_Mueller@twam.info])
+AC_INIT([fontgen], [m4_esyscmd_s([git describe --always --tag --dirty])], [Tobias_Mueller@twam.info], [fontgen], [https://github.com/twam/fontgen])
 
 # prepare for automake
 AM_INIT_AUTOMAKE

@@ -4,10 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "options.h"
+#include "config.h"
 
 void usage(int argc, char** argv) {
 	printf("Usage: %s [options] \n\n"
 		"     --help                                  Display this help screen\n"
+		"     --version                               Display version information"
 		"-f | --font <filename>                       Font file to read from\n"
 		"-h | --height <height>                       Font height to render\n"
 		"-w | --width <width>                         Font width to render\n"
@@ -22,6 +24,7 @@ void parse(int argc, char** argv, arguments_t *arguments) {
 
 	const struct option long_options[] = {
 		{ "help", no_argument, NULL, 1},
+		{ "version", no_argument, NULL, 2},
 		{ "font", required_argument, NULL, 'f'},
 		{ "width", required_argument, NULL, 'w'},
 		{ "height", required_argument, NULL, 'h'},
@@ -92,6 +95,11 @@ void parse(int argc, char** argv, arguments_t *arguments) {
 
 			case 1: // help
 				usage(argc, argv);
+				exit(EXIT_SUCCESS);
+				break;
+
+			case 2: // version
+				fprintf(stdout, PACKAGE_STRING ", " PACKAGE_URL "\n");
 				exit(EXIT_SUCCESS);
 
 			default:
