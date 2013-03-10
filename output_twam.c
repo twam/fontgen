@@ -148,7 +148,7 @@ static int output_twam_write_characters(FILE *fd, const character_t* characters,
 	fprintf(fd, "const character_t %s_characters[] = {\n", fontname_lower);
 
 	for (size_t i = 0; i < characters_size; ++i) {
-		fprintf(fd,	"\t{0x%08X, &%s_glyph_%i}, \n", characters[i].ucs4, fontname_lower, glyphs[characters[i].glyph].glyph_index);
+		fprintf(fd,	"\t{0x%04X, &%s_glyph_%i}, \n", characters[i].ucs4, fontname_lower, glyphs[characters[i].glyph].glyph_index);
 	}
 
 	fprintf(fd, "};\n\n");
@@ -226,7 +226,7 @@ static int output_twam_write_headers(const char* output_directory) {
 		"\tuint8_t bold;\n"
 		"\tuint8_t monospace;\n"
 		"\tconst character_t* characters;\n"
-		"\tuint32_t characters_size;\n"
+		"\tuint16_t characters_size;\n"
 		"} font_t;\n\n"
 		"#endif\n"
 		);
@@ -251,7 +251,7 @@ static int output_twam_write_headers(const char* output_directory) {
 		"#include <glyph.h>\n"
 		"#include <inttypes.h>\n\n"
 		"typedef struct {\n"
-		"\tuint32_t ucs4;\n"
+		"\tuint16_t ucs4;\n"
 		"\tconst glyph_t *glyph;\n"
 		"} character_t;\n\n"
 		"#endif\n"
