@@ -14,13 +14,22 @@
 #include "output_bmp.h"
 
 int main(int argc, char** argv) {
+	// freetype library handle
 	FT_Library library;
+
+	// arguments
 	arguments_t arguments;
+
+	// font
+	font_t font;
+
+	// characters
 	size_t characters_size = 0;
 	character_t* characters = malloc(sizeof(character_t)*characters_size);
+
+	// glyphs
 	size_t glyphs_size = 0;
-	glyph_t* glyphs = malloc(sizeof(glyph_t)*glyphs_size);
-	font_t font;
+	glyph_t** glyphs = malloc(sizeof(glyph_t*)*glyphs_size);
 
 	set_default_values(&arguments);
 
@@ -100,11 +109,11 @@ int main(int argc, char** argv) {
 
 	switch (arguments.output_format) {
 		case BMP:
-			output_bmp_write(arguments.output_directory, &font, characters, characters_size, glyphs, glyphs_size);
+			output_bmp_write(arguments.output_directory, &font, characters, characters_size, (const glyph_t**)glyphs, glyphs_size);
 			break;
 
 		case TWAM:
-			output_twam_write(arguments.output_directory, &font, characters, characters_size, glyphs, glyphs_size);
+			output_twam_write(arguments.output_directory, &font, characters, characters_size, (const glyph_t**)glyphs, glyphs_size);
 			break;
 	}
 

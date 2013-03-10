@@ -4,7 +4,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include "font.h"
-#include "character.h"
+
+struct character;
 
 typedef struct {
 	// glyph name
@@ -32,9 +33,9 @@ typedef struct {
 	FT_UInt glyph_index;
 } glyph_t;
 
-size_t glyph_add(glyph_t** glyphs, size_t* glyphs_size, FT_Face, FT_UInt glyph_index);
-size_t glyph_get_position(glyph_t* glyphs, size_t glyphs_size, FT_UInt glyph_index);
-void glyphs_load(glyph_t** glyphs, size_t* glyphs_size, font_t* font, character_t* characters, size_t characters_size);
-void free_glyphs(glyph_t** glyphs, size_t* glyphs_size);
+glyph_t* glyph_add(glyph_t*** glyphs, size_t* glyphs_size, FT_Face, FT_UInt glyph_index);
+glyph_t* glyph_get(glyph_t** glyphs, size_t glyphs_size, FT_UInt glyph_index);
+void glyphs_load(glyph_t*** glyphs, size_t* glyphs_size, font_t* font, struct character* characters, size_t characters_size);
+void free_glyphs(glyph_t*** glyphs, size_t* glyphs_size);
 
 #endif

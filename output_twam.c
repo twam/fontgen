@@ -4,12 +4,12 @@
 #include "output.h"
 
 static int output_twam_write_headers(const char* output_directory);
-static int output_twam_write_data(const char* output_directory, const font_t *font, const character_t* characters, size_t characters_size, const glyph_t* glyphs, size_t glyphs_size);
+static int output_twam_write_data(const char* output_directory, const font_t *font, const character_t* characters, size_t characters_size, const glyph_t** glyphs, size_t glyphs_size);
 static int output_twam_write_font(FILE *fd, const font_t *font, const char* fontname_lower, size_t characters_size);
-static int output_twam_write_characters(FILE *fd, const character_t* characters, size_t characters_size, const glyph_t* glyphs, const char* fontname_lower);
-static int output_twam_write_glyphs(FILE *fd, const glyph_t* glyphs, size_t glyphs_size, const char* fontname_lower);
+static int output_twam_write_characters(FILE *fd, const character_t* characters, size_t characters_size, const glyph_t** glyphs, const char* fontname_lower);
+static int output_twam_write_glyphs(FILE *fd, const glyph_t** glyphs, size_t glyphs_size, const char* fontname_lower);
 
-int output_twam_write(const char* output_directory, const font_t* font, const character_t* characters, size_t characters_size, const glyph_t* glyphs, size_t glyphs_size) {
+int output_twam_write(const char* output_directory, const font_t* font, const character_t* characters, size_t characters_size, const glyph_t** glyphs, size_t glyphs_size) {
 	int ret = 0;
 
 	// Check if directory exists
@@ -24,7 +24,7 @@ int output_twam_write(const char* output_directory, const font_t* font, const ch
 	return ret;
 }
 
-static int output_twam_write_data(const char* output_directory, const font_t *font, const character_t* characters, size_t characters_size, const glyph_t* glyphs, size_t glyphs_size) {
+static int output_twam_write_data(const char* output_directory, const font_t *font, const character_t* characters, size_t characters_size, const glyph_t** glyphs, size_t glyphs_size) {
 	int ret = 0;
 
 	char* fontname;
@@ -111,11 +111,11 @@ static int output_twam_write_font(FILE *fd, const font_t *font, const char* font
 	return 0;
 }
 
-static int output_twam_write_characters(FILE *fd, const character_t* characters, size_t characters_size, const glyph_t* glyphs, const char* fontname_lower) {
+static int output_twam_write_characters(FILE *fd, const character_t* characters, size_t characters_size, const glyph_t** glyphs, const char* fontname_lower) {
 	fprintf(fd, "const character_t %s_characters[] = {\n", fontname_lower);
 
 	for (size_t i = 0; i < characters_size; ++i) {
-		fprintf(fd,	"\t{0x%04X, &%s_glyph_%i}, \n", characters[i].ucs4, fontname_lower, glyphs[characters[i].glyph].glyph_index);
+		fprintf(fd,	"\t{0x%04X, &%s_glyph_%i}, \n", characters[i].ucs4, fontname_lower, characters[i].glyph->glyph_index);
 	}
 
 	fprintf(fd, "};\n\n");
@@ -123,7 +123,7 @@ static int output_twam_write_characters(FILE *fd, const character_t* characters,
 	return 0;
 }
 
-static int output_twam_write_glyphs(FILE *fd, const glyph_t* glyphs, size_t glyphs_size, const char* fontname_lower) {
+static int output_twam_write_glyphs(FILE *fd, const glyph_t** glyphs, size_t glyphs_size, const char* fontname_lower) {
 	for (size_t i = 0; i < glyphs_size; ++i) {
 		fprintf(fd,
 			"const glyph_t %s_glyph_%i = {\n"
@@ -134,17 +134,17 @@ static int output_twam_write_glyphs(FILE *fd, const glyph_t* glyphs, size_t glyp
 			"\t%i,\t// width\n"
 			"\t%i,\t// pitch\n"
 			"\t{\t// %s\n"
-			, fontname_lower, glyphs[i].glyph_index, glyphs[i].bitmap_left, glyphs[i].bitmap_top, glyphs[i].advance, glyphs[i].bitmap_rows, glyphs[i].bitmap_width, glyphs[i].bitmap_pitch, glyphs[i].name);
+			, fontname_lower, glyphs[i]->glyph_index, glyphs[i]->bitmap_left, glyphs[i]->bitmap_top, glyphs[i]->advance, glyphs[i]->bitmap_rows, glyphs[i]->bitmap_width, glyphs[i]->bitmap_pitch, glyphs[i]->name);
 
-			for (int row = 0; row <glyphs[i].bitmap_rows; ++row) {
+			for (int row = 0; row <glyphs[i]->bitmap_rows; ++row) {
 				fprintf(fd, "\t\t");
-				for (int pitch = 0; pitch < glyphs[i].bitmap_pitch; ++pitch) {
-					fprintf(fd, "0x%02hhX, ", glyphs[i].bitmap_data[row*glyphs[i].bitmap_pitch+pitch]);
+				for (int pitch = 0; pitch < glyphs[i]->bitmap_pitch; ++pitch) {
+					fprintf(fd, "0x%02hhX, ", glyphs[i]->bitmap_data[row*glyphs[i]->bitmap_pitch+pitch]);
 			 	}
 
 			 	fprintf(fd, "// ");
-				for (int col = 0; col < glyphs[i].bitmap_width; ++col) {
-			 		unsigned int value = glyphs[i].bitmap_data[row*glyphs[i].bitmap_pitch+col/8] & (0x80 >> (col % 8));
+				for (int col = 0; col < glyphs[i]->bitmap_width; ++col) {
+			 		unsigned int value = glyphs[i]->bitmap_data[row*glyphs[i]->bitmap_pitch+col/8] & (0x80 >> (col % 8));
 			 		if (value) {
 			 			fprintf(fd, "X");
 			 		} else {

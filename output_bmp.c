@@ -9,7 +9,7 @@ static uint32_t max_uint32_t(uint32_t a, uint32_t b) {
 
 static int output_bmp_write_header(FILE *fd, uint32_t width, uint32_t height, uint32_t pitch);
 
-int output_bmp_write(const char* output_directory, const font_t* font, const character_t* characters, size_t characters_size, const glyph_t* glyphs, size_t glyphs_size) {
+int output_bmp_write(const char* output_directory, const font_t* font, const character_t* characters, size_t characters_size, const glyph_t** glyphs, size_t glyphs_size) {
 	int ret = 0;
 
 	// Check if directory exists
@@ -37,7 +37,6 @@ int output_bmp_write(const char* output_directory, const font_t* font, const cha
 	uint32_t width = characters_per_line*dimension;
 	uint32_t height = lines*dimension;
 	uint32_t pitch = (width+31)/32;
-	uint32_t width_with_padding = pitch*32;
 
 	uint32_t pixeldata[height*pitch];
 
@@ -70,18 +69,18 @@ int output_bmp_write(const char* output_directory, const font_t* font, const cha
 				continue;
 
 			// coordinates inside char
-			int32_t inside_x = x-char_x*dimension-glyphs[characters[char_pos].glyph].bitmap_left;
-			int32_t inside_y = top_y-char_y*dimension-(font->ascender-1)+glyphs[characters[char_pos].glyph].bitmap_top;
+			int32_t inside_x = x-char_x*dimension-characters[char_pos].glyph->bitmap_left;
+			int32_t inside_y = top_y-char_y*dimension-(font->ascender)+characters[char_pos].glyph->bitmap_top;
 
 
 
-			if ((inside_y < 0) || (inside_y >= glyphs[characters[char_pos].glyph].bitmap_rows))
+			if ((inside_y < 0) || (inside_y >= characters[char_pos].glyph->bitmap_rows))
 				continue;
 
-			if ((inside_x < 0) || (inside_x >= glyphs[characters[char_pos].glyph].bitmap_width))
+			if ((inside_x < 0) || (inside_x >= characters[char_pos].glyph->bitmap_width))
 				continue;
 
-	 		unsigned int value = glyphs[characters[char_pos].glyph].bitmap_data[inside_y*glyphs[characters[char_pos].glyph].bitmap_pitch+inside_x/8] & (0x80 >> (inside_x % 8));
+	 		unsigned int value = characters[char_pos].glyph->bitmap_data[inside_y*characters[char_pos].glyph->bitmap_pitch+inside_x/8] & (0x80 >> (inside_x % 8));
 
 			if (value) {
 				pixeldata[y*pitch+x/32] |= (0x80000000>>(x%32));

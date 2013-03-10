@@ -1,18 +1,20 @@
 #include "glyph.h"
+#include "character.h"
 
-size_t glyph_add(glyph_t** glyphs, size_t* glyphs_size, FT_Face face, FT_UInt glyph_index) {
-	size_t pos = glyph_get_position(*glyphs, *glyphs_size, glyph_index);
+glyph_t* glyph_add(glyph_t*** glyphs, size_t* glyphs_size, FT_Face face, FT_UInt glyph_index) {
+	glyph_t* glyph = glyph_get(*glyphs, *glyphs_size, glyph_index);
 	// skip adding if we already have this character
-	if (pos != -1)
-		return pos;
+	if (glyph != NULL) {
+		return glyph;
+	}
 
 	// resize characters array
 	*glyphs_size += 1;
-	*glyphs = realloc(*glyphs, sizeof(glyph_t)*(*glyphs_size));
+	*glyphs = realloc(*glyphs, sizeof(glyph_t*)*(*glyphs_size));
 
 	// get correct position for insertion
-	pos = 0;
-	while ((pos+1 < *glyphs_size) && ((*glyphs)[pos].glyph_index < glyph_index))
+	size_t pos = 0;
+	while ((pos+1 < *glyphs_size) && ((*glyphs)[pos]->glyph_index < glyph_index))
 		pos++;
 
 	// move everything after character
@@ -23,7 +25,9 @@ size_t glyph_add(glyph_t** glyphs, size_t* glyphs_size, FT_Face face, FT_UInt gl
 	}
 
 	// set-up new character
-	glyph_t *glyph = &(*glyphs)[pos];
+	(*glyphs)[pos] = malloc(sizeof(glyph_t));
+	glyph = (*glyphs)[pos];
+
 	glyph->glyph_index = glyph_index;
 
 	// setup name
@@ -65,36 +69,37 @@ size_t glyph_add(glyph_t** glyphs, size_t* glyphs_size, FT_Face face, FT_UInt gl
 		}
 	}
 
-	return pos;
+	return glyph;
 }
 
-size_t glyph_get_position(glyph_t* glyphs, size_t glyphs_size, FT_UInt glyph_index) {
+glyph_t* glyph_get(glyph_t** glyphs, size_t glyphs_size, FT_UInt glyph_index) {
 	for (size_t i = 0; i < glyphs_size; ++i) {
-		if (glyphs[i].glyph_index == glyph_index) {
-			return i;
+		if (glyphs[i]->glyph_index == glyph_index) {
+			return glyphs[i];
 		}
 	}
 
-	return -1;
+	return NULL;
 }
 
-void glyphs_load(glyph_t** glyphs, size_t* glyphs_size, font_t* font, character_t* characters, size_t characters_size) {
+void glyphs_load(glyph_t*** glyphs, size_t* glyphs_size, font_t* font, character_t* characters, size_t characters_size) {
 	for (size_t i = 0; i < characters_size; ++i) {
 		// get corresponding glyph index from freetype
 		FT_UInt glyph_index = FT_Get_Char_Index(font->ft_face, characters[i].ucs4);
 
 		// add glyph to glyphs array
-		size_t glyph_pos = glyph_add(glyphs, glyphs_size, font->ft_face, glyph_index);
+		glyph_t* glyph = glyph_add(glyphs, glyphs_size, font->ft_face, glyph_index);
 
 		// save glyph position in character information
-		characters[i].glyph = glyph_pos;
+		characters[i].glyph = glyph;
 	}
 }
 
-void free_glyphs(glyph_t** glyphs, size_t* glyphs_size) {
+void free_glyphs(glyph_t*** glyphs, size_t* glyphs_size) {
 	for (size_t i = 0; i < *glyphs_size; ++i) {
-		free ((*glyphs)[i].name);
-		free ((*glyphs)[i].bitmap_data);
+		free ((*glyphs)[i]->name);
+		free ((*glyphs)[i]->bitmap_data);
+		free ((*glyphs)[i]);
 	}
 
 	free(*glyphs);
