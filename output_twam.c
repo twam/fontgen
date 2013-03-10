@@ -1,8 +1,7 @@
-#include <unistd.h>
-#include <errno.h>
 #include <ctype.h>
 #include <stdio.h>
 #include "output_twam.h"
+#include "output.h"
 
 static int output_twam_write_headers(const char* output_directory);
 static int output_twam_write_data(const char* output_directory, const font_t *font, const character_t* characters, size_t characters_size, const glyph_t* glyphs, size_t glyphs_size);
@@ -14,41 +13,9 @@ int output_twam_write(const char* output_directory, const font_t* font, const ch
 	int ret = 0;
 
 	// Check if directory exists
-
-	if (0 != access(output_directory, R_OK | W_OK)) {
-		switch (errno) {
-			case EACCES:
-				fprintf(stderr, "Read/Write access denied to '%s'!\n", output_directory);
-				break;
-
-			case ELOOP:
-				fprintf(stderr, "Too many symbolic links were encountered while resolving '%s'!\n", output_directory);
-				break;
-
-			case ENAMETOOLONG:
-				fprintf(stderr, "Path '%s' is too long!\n", output_directory);
-				break;
-
-			case ENOENT:
-				fprintf(stderr, "Directory '%s' does not exist!\n", output_directory);
-				break;
-
-			case ENOTDIR:
-				fprintf(stderr, "'%s' is not a directory!!\n", output_directory);
-				break;
-
-			case EROFS:
-				fprintf(stderr, "'%s' is on a read-only filesystem!\n", output_directory);
-				break;
-
-			default:
-				perror("access");
-				break;
-		}
-
-		return -1;
-	}
-
+	ret += output_check_directory(output_directory);
+	if (ret != 0)
+		return ret;
 
 	// font-info
 	ret += output_twam_write_headers(output_directory);
