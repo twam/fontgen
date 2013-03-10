@@ -61,7 +61,20 @@ int main(int argc, char** argv) {
 				exit(EXIT_FAILURE);
 			}
 
-			character_add(&characters, &characters_size, ucs4);
+			if (*next == '-') {
+				next++;
+				uint32_t ucs4_end = strtoul(next, &next, 0);
+				if (ucs4 > ucs4_end) {
+					fprintf(stderr, "Range %u-%u is negative while parsing characters.\n", ucs4, ucs4_end);
+					exit(EXIT_FAILURE);
+				} else {
+					for (uint32_t i = ucs4; i <= ucs4_end; ++i) {
+						character_add(&characters, &characters_size, i);
+					}
+				}
+			} else {
+				character_add(&characters, &characters_size, ucs4);
+			}
 
 			while (*next == ',') {
 				next++;

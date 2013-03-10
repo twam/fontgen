@@ -16,7 +16,7 @@ void usage(int argc, char** argv) {
 		"-o | --output <directory>                    Output directory\n"
 		"-c | --charsets <charset1>,<charset2>,...    List of charsets to render\n"
 		"   | --list-charsets                         Display a list of supported charsets\n"
-		"-C | --characters <char1>,<char2>,...        List of character codes to render"
+		"-C | --characters <char1>,<char2>,...        List of character codes to render. Ranges are also supported."
 		, argv[0]);
 }
 
