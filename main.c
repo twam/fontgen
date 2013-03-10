@@ -11,6 +11,7 @@
 #include "font.h"
 #include "charsets.h"
 #include "output_twam.h"
+#include "output_bmp.h"
 
 int main(int argc, char** argv) {
 	FT_Library library;
@@ -87,12 +88,19 @@ int main(int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	printf("%li characters\n", characters_size);
+	printf("Generated %li characters.\n", characters_size);
 
 	glyphs_load(&glyphs, &glyphs_size, &font, characters, characters_size);
 
+	switch (arguments.output_format) {
+		case BMP:
+			output_bmp_write(arguments.output_directory, &font, characters, characters_size, glyphs, glyphs_size);
+			break;
 
-	output_twam_write(arguments.output_directory, &font, characters, characters_size, glyphs, glyphs_size);
+		case TWAM:
+			output_twam_write(arguments.output_directory, &font, characters, characters_size, glyphs, glyphs_size);
+			break;
+	}
 
 	free_arguments(&arguments);
 	free_glyphs(&glyphs, &glyphs_size);

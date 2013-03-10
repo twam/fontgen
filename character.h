@@ -13,7 +13,7 @@ typedef struct {
 } character_t;
 
 size_t character_add(character_t** characters, size_t* characters_size, uint32_t ucs4);
-size_t character_get_position(character_t* characters, size_t characters_size, uint32_t ucs4);
+size_t character_get_position(const character_t* characters, size_t characters_size, uint32_t ucs4);
 void free_characters(character_t** characters, size_t* characters_size);
 
 #endif

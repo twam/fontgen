@@ -14,6 +14,8 @@ void usage(int argc, char** argv) {
 		"-h | --height <height>                       Font height to render\n"
 		"-w | --width <width>                         Font width to render\n"
 		"-o | --output <directory>                    Output directory\n"
+		"-O | --output-format <format>                Specifiy output form\n"
+		"   | --list-output-formats                   Display a list of supported output formats\n"
 		"-c | --charsets <charset1>,<charset2>,...    List of charsets to render\n"
 		"   | --list-charsets                         Display a list of supported charsets\n"
 		"-C | --characters <char1>,<char2>,...        List of character codes to render. Ranges are also supported."
@@ -21,10 +23,10 @@ void usage(int argc, char** argv) {
 }
 
 void parse(int argc, char** argv, arguments_t *arguments) {
-	const char short_options[] = "f:h:w:o:c:C:";
+	const char short_options[] = "f:h:w:o:O:c:C:";
 
 	enum {
-		OPTION_HELP = 1, OPTION_VERSION, OPTION_LISTCHARSETS
+		OPTION_HELP = 1, OPTION_VERSION, OPTION_LISTCHARSETS, OPTION_LISTOUTPUTFORMATS
 	};
 
 	const struct option long_options[] = {
@@ -34,6 +36,8 @@ void parse(int argc, char** argv, arguments_t *arguments) {
 		{ "width", required_argument, NULL, 'w'},
 		{ "height", required_argument, NULL, 'h'},
 		{ "output", required_argument, NULL, 'o'},
+		{ "output-format", required_argument, NULL, 'O'},
+		{ "list-output-formats", no_argument, NULL, OPTION_LISTOUTPUTFORMATS},
 		{ "charsets", required_argument, NULL, 'c'},
 		{ "list-charsets", no_argument, NULL, OPTION_LISTCHARSETS},
 		{ "characters", required_argument, NULL, 'C'},
@@ -46,6 +50,13 @@ void parse(int argc, char** argv, arguments_t *arguments) {
 		[ISO_8859_7] = "iso-8859-7",
 		NULL
 	};
+
+	char* const output_formats_opts[] = {
+		[BMP] = "bmp",
+		[TWAM] = "twam",
+		NULL
+	};
+
 
 	for (;;) {
 		int c = 0;
@@ -73,6 +84,30 @@ void parse(int argc, char** argv, arguments_t *arguments) {
 
 			case 'o':
 				arguments->output_directory = optarg;
+				break;
+
+			case 'O':
+				{
+					size_t i = 0;
+					while (output_formats_opts[i] != NULL) {
+						if (strcmp(optarg, output_formats_opts[i]) == 0) {
+							arguments->output_format = i;
+						}
+
+						i++;
+					}
+				}
+				break;
+
+			case OPTION_LISTOUTPUTFORMATS:
+				{
+					size_t i = 0;
+					while (output_formats_opts[i] != NULL) {
+						printf("%s\n", output_formats_opts[i]);
+						i++;
+					}
+					exit(EXIT_SUCCESS);
+				}
 				break;
 
 			case 'c':
@@ -156,6 +191,8 @@ void free_arguments(arguments_t* arguments) {
 
 void set_default_values(arguments_t* arguments) {
 	arguments->output_directory = NULL;
+	arguments->output_format = BMP;
+
 	arguments->font_filename = NULL;
 	arguments->font_width = 0;
 	arguments->font_height = 0;

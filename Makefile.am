@@ -4,5 +4,5 @@ CFLAGS = -Wall -std=c99 -O2 `freetype-config --cflags` -g -D_GNU_SOURCE
 LDFLAGS = `freetype-config --libs`
 
 bin_PROGRAMS = fontgen
-fontgen_SOURCES = character.c charsets.c convert.c font.c glyph.c main.c  options.c output_twam.c
+fontgen_SOURCES = character.c charsets.c convert.c font.c glyph.c main.c options.c output.c output_bmp.c output_twam.c
 

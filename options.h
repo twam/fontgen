@@ -9,11 +9,18 @@ typedef enum {
 	ISO_8859_7
 } charset_t;
 
+typedef enum {
+	BMP,
+	TWAM
+} output_format_t;
+
 typedef struct {
 	char *font_filename;
 	unsigned int font_width;
 	unsigned int font_height;
+
 	char *output_directory;
+	output_format_t output_format;
 
 	charset_t* charsets;
 	size_t charsets_size;

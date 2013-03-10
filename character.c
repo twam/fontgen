@@ -28,7 +28,7 @@ size_t character_add(character_t** characters, size_t* characters_size, uint32_t
 	return pos;
 }
 
-size_t character_get_position(character_t* characters, size_t characters_size, uint32_t ucs4) {
+size_t character_get_position(const character_t* characters, size_t characters_size, uint32_t ucs4) {
 	for (size_t i = 0; i < characters_size; ++i) {
 		if (characters[i].ucs4 == ucs4) {
 			return i;
