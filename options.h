@@ -1,6 +1,8 @@
 #ifndef _OPTIONS_H_
 #define _OPTIONS_H_
 
+#include <stdlib.h>
+
 typedef enum {
 	ASCII,
 	ISO_8859_1,

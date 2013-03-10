@@ -14,7 +14,8 @@ void usage(int argc, char** argv) {
 		"-h | --height <height>                       Font height to render\n"
 		"-w | --width <width>                         Font width to render\n"
 		"-o | --output <directory>                    Output directory\n"
-		"-c | --charsets <charset1>,<charset2>,...    List of charsets to render"
+		"-c | --charsets <charset1>,<charset2>,...    List of charsets to render\n"
+		"   | --list-charsets                         Display a list of supported charsets\n"
 		"-C | --characters <char1>,<char2>,...        List of character codes to render"
 		, argv[0]);
 }
@@ -22,16 +23,28 @@ void usage(int argc, char** argv) {
 void parse(int argc, char** argv, arguments_t *arguments) {
 	const char short_options[] = "f:h:w:o:c:C:";
 
+	enum {
+		OPTION_HELP = 1, OPTION_VERSION, OPTION_LISTCHARSETS
+	};
+
 	const struct option long_options[] = {
-		{ "help", no_argument, NULL, 1},
-		{ "version", no_argument, NULL, 2},
+		{ "help", no_argument, NULL, OPTION_HELP},
+		{ "version", no_argument, NULL, OPTION_VERSION},
 		{ "font", required_argument, NULL, 'f'},
 		{ "width", required_argument, NULL, 'w'},
 		{ "height", required_argument, NULL, 'h'},
 		{ "output", required_argument, NULL, 'o'},
 		{ "charsets", required_argument, NULL, 'c'},
+		{ "list-charsets", no_argument, NULL, OPTION_LISTCHARSETS},
 		{ "characters", required_argument, NULL, 'C'},
 		{ 0, 0, 0, 0 }
+	};
+
+	char* const charsets_opts[] = {
+		[ASCII] = "ascii",
+		[ISO_8859_1] = "iso-8859-1",
+		[ISO_8859_7] = "iso-8859-7",
+		NULL
 	};
 
 	for (;;) {
@@ -62,30 +75,24 @@ void parse(int argc, char** argv, arguments_t *arguments) {
 				arguments->output_directory = optarg;
 				break;
 
-			case 'c': {
-				char *value;
-				char *subopts = optarg;
+			case 'c':
+				{
+					char *value;
+					char *subopts = optarg;
 
-				char* const charsets_opts[] = {
-					[ASCII] = "ascii",
-					[ISO_8859_1] = "iso-8859-1",
-					[ISO_8859_7] = "iso-8859-7",
-					NULL
-				};
+					while (*subopts != '\0') {
+						int option = getsubopt(&subopts, charsets_opts, &value);
 
-				while (*subopts != '\0') {
-					int option = getsubopt(&subopts, charsets_opts, &value);
+						if (option == -1) {
+							printf("Unknown charset: '%s'\n", value);
+							exit(EXIT_FAILURE);
+						}
 
-					if (option == -1) {
-						printf("Unknown charset: '%s'\n", value);
-						exit(EXIT_FAILURE);
+						arguments->charsets_size++;
+						arguments->charsets = realloc(arguments->charsets, sizeof(charset_t)*arguments->charsets_size);
+						arguments->charsets[arguments->charsets_size-1] = option;
+
 					}
-
-					arguments->charsets_size++;
-					arguments->charsets = realloc(arguments->charsets, sizeof(charset_t)*arguments->charsets_size);
-					arguments->charsets[arguments->charsets_size-1] = option;
-
-				}
 				}
 				break;
 
@@ -93,14 +100,26 @@ void parse(int argc, char** argv, arguments_t *arguments) {
 				arguments->characters = optarg;
 				break;
 
-			case 1: // help
+			case OPTION_HELP: // help
 				usage(argc, argv);
 				exit(EXIT_SUCCESS);
 				break;
 
-			case 2: // version
-				fprintf(stdout, PACKAGE_STRING ", " PACKAGE_URL "\n");
+			case OPTION_VERSION: // version
+				printf(PACKAGE_STRING ", " PACKAGE_URL "\n");
 				exit(EXIT_SUCCESS);
+				break;
+
+			case OPTION_LISTCHARSETS: // list charsets
+				{
+					size_t i = 0;
+					while (charsets_opts[i] != NULL) {
+						printf("%s\n", charsets_opts[i]);
+						i++;
+					}
+					exit(EXIT_SUCCESS);
+				}
+				break;
 
 			default:
 			case ':': // missing option argument
