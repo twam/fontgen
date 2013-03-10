@@ -46,6 +46,7 @@ size_t glyph_add(glyph_t** glyphs, size_t* glyphs_size, FT_Face face, FT_UInt gl
 	// render glyph
 	FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO);
 
+	glyph->advance = face->glyph->linearHoriAdvance/0x10000L;
 	glyph->bitmap_left = face->glyph->bitmap_left;
 	glyph->bitmap_top = face->glyph->bitmap_top;
 

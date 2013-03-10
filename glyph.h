@@ -10,6 +10,9 @@ typedef struct {
 	// glyph name
 	char* name;
 
+	///
+	int advance;
+
 	/// This is the bitmap's left bearing expressed in integer pixels
 	int bitmap_left;
 	/// This is the bitmap's top bearing expressed in integer pixels. Remember that this is the distance from the baseline to the top-most glyph scanline, upwards y coordinates being positive.
