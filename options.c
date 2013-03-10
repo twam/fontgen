@@ -84,7 +84,7 @@ void parse(int argc, char** argv, arguments_t *arguments) {
 						int option = getsubopt(&subopts, charsets_opts, &value);
 
 						if (option == -1) {
-							printf("Unknown charset: '%s'\n", value);
+							printf("Unknown charset: '%s'\n", optarg);
 							exit(EXIT_FAILURE);
 						}
 
