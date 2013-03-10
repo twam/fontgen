@@ -38,6 +38,10 @@ void font_set_size(font_t *font, int width, int height) {
 
 	font->width = width;
 	font->height = height;
+
+	font->ascender = font->ft_face->size->metrics.ascender/64;
+	font->descender = font->ft_face->size->metrics.descender/64;
+	font->max_advance = font->ft_face->size->metrics.max_advance/64;
 }
 
 void free_font(font_t *font) {

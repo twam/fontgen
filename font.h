@@ -15,6 +15,10 @@ typedef struct {
 	int width;
 	int height;
 
+	int ascender;
+	int descender;
+	int max_advance;
+
 	// freetype font face
 	FT_Face ft_face;
 } font_t;
