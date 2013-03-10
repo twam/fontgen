@@ -127,13 +127,14 @@ static int output_twam_write_glyphs(FILE *fd, const glyph_t* glyphs, size_t glyp
 	for (size_t i = 0; i < glyphs_size; ++i) {
 		fprintf(fd,
 			"const glyph_t %s_glyph_%i = {\n"
-			"\t%i,\t// left;\n"
-			"\t%i,\t// top;\n"
-			"\t%i,\t// rows;\n"
-			"\t%i,\t// width;\n"
-			"\t%i,\t// pitch;\n"
+			"\t%i,\t// left\n"
+			"\t%i,\t// top\n"
+			"\t%i,\t// advance\n"
+			"\t%i,\t// rows\n"
+			"\t%i,\t// width\n"
+			"\t%i,\t// pitch\n"
 			"\t{\t// %s\n"
-			, fontname_lower, glyphs[i].glyph_index, glyphs[i].bitmap_left, glyphs[i].bitmap_top, glyphs[i].bitmap_rows, glyphs[i].bitmap_width, glyphs[i].bitmap_pitch, glyphs[i].name);
+			, fontname_lower, glyphs[i].glyph_index, glyphs[i].bitmap_left, glyphs[i].bitmap_top, glyphs[i].advance, glyphs[i].bitmap_rows, glyphs[i].bitmap_width, glyphs[i].bitmap_pitch, glyphs[i].name);
 
 			for (int row = 0; row <glyphs[i].bitmap_rows; ++row) {
 				fprintf(fd, "\t\t");
@@ -246,6 +247,7 @@ static int output_twam_write_headers(const char* output_directory) {
 		"typedef struct {\n"
 		"\tint8_t left;\n"
 		"\tint8_t top;\n"
+		"\tint8_t advance;\n"
 		"\tuint8_t rows;\n"
 		"\tuint8_t width;\n"
 		"\tuint8_t pitch;\n"
